@@ -17,8 +17,8 @@ func (p person) print() {
 	fmt.Printf("%+v", p)
 }
 
-func (p person) updateName(newName string) {
-	p.firstName = newName
+func (p *person) updateName(newName string) {
+	(*p).firstName = newName
 }
 
 func main() {
@@ -30,6 +30,9 @@ func main() {
 			zip:   84,
 		},
 	}
+	// different with slice
+	// slice is a kind of array with head is point to first item in array?
+	// value types -> need to be careful | reference types -> chill and think
 	jim.updateName("FInnick")
 	jim.print()
 
