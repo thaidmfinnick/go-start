@@ -35,5 +35,4 @@ func main() {
 	// value types -> need to be careful | reference types -> chill and think
 	jim.updateName("FInnick")
 	jim.print()
-
 }
