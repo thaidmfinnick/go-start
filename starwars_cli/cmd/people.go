@@ -29,6 +29,9 @@ var peopleCmd = &cobra.Command{
 			return
 		}
 
+		test, err := cmd.Flags().GetBool("vers")
+		fmt.Println("persistant flag", test)
+
 		if verbose {
 			fmt.Println("Running in verbose mode")
 		}

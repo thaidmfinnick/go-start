@@ -42,5 +42,6 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.PersistentFlags().BoolP("vers", "s", false, "test verbose persistant")
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
