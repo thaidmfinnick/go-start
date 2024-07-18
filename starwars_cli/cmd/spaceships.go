@@ -1,40 +1,57 @@
 /*
 Copyright © 2024 thaidmfinnick
-
 */
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"starwars_cli/api"
+	"starwars_cli/utils"
 
 	"github.com/spf13/cobra"
 )
 
 // spaceshipsCmd represents the spaceships command
 var spaceshipsCmd = &cobra.Command{
-	Use:   "spaceships",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "ships",
+	Short: "Get all spaceships in Starwars with information in command line",
+	Long:  `Get all spaceships in Starwars with information in command line`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("spaceships called")
+		verbose, limit, err := api.CheckAllFlags(cmd)
+		if err != nil {
+			fmt.Println("error with flag:", err)
+			return
+		}
+		utils.PrintVerboseMode(verbose)
+		getAllShips(limit, verbose)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(spaceshipsCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func getAllShips(limit int, verbose bool) {
+	resBytes := api.GetAllData("/starships")
+	var ships api.SpaceShips
+	err := json.Unmarshal(resBytes, &ships)
+	if err != nil {
+		errString := fmt.Sprint("error when parse spaceship: ", err)
+		panic(errString)
+	}
+	starShips := ships.Ships
+	limiStarShips := starShips[:]
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// spaceshipsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// spaceshipsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if limit > 0 && limit <= len(starShips) {
+		limiStarShips = starShips[:limit]
+	}
+	for _, s := range limiStarShips {
+		fmt.Println("Name:", s.Name)
+		if verbose {
+			fmt.Println("Model:", s.Model)
+			fmt.Println("Manufacturer:", s.Manufacturer)
+		}
+		fmt.Println("--------------")
+	}
 }

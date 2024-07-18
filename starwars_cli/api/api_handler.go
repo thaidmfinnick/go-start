@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"io"
 	"net/http"
 )
@@ -26,4 +27,19 @@ func GetAllData(typeData string) []byte {
 	}
 
 	return body
+}
+
+func CheckAllFlags(cmd *cobra.Command) (bool, int, error) {
+	f := cmd.Flags()
+	verbose, err := f.GetBool("verbose")
+	if err != nil {
+		return false, -1, err
+	}
+
+	limit, err := f.GetInt("limit")
+	if err != nil {
+		return false, -1, err
+	}
+
+	return verbose, limit, nil
 }

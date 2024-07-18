@@ -1,11 +1,13 @@
 /*
 Copyright © 2024 thaidmfinnick
-
 */
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"starwars_cli/api"
+	"starwars_cli/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -13,28 +15,43 @@ import (
 // planetsCmd represents the planets command
 var planetsCmd = &cobra.Command{
 	Use:   "planets",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Get all planets in Starwars with information in command line",
+	Long:  `Get all planets in Starwars with information in command line`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("planets called")
+		verbose, limit, err := api.CheckAllFlags(cmd)
+		if err != nil {
+			fmt.Println("error with flag:", err)
+			return
+		}
+		utils.PrintVerboseMode(verbose)
+		getAllPlanets(limit, verbose)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(planetsCmd)
+}
 
-	// Here you will define your flags and configuration settings.
+func getAllPlanets(limit int, verbose bool) {
+	resBytes := api.GetAllData("/planets")
+	var planets api.Planets
+	err := json.Unmarshal(resBytes, &planets)
+	if err != nil {
+		errString := fmt.Sprint("error when parse planets: ", err)
+		panic(errString)
+	}
+	allPlanets := planets.Planets
+	limitPlanets := allPlanets[:]
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// planetsCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// planetsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	if limit > 0 && limit <= len(allPlanets) {
+		limitPlanets = allPlanets[:limit]
+	}
+	for _, p := range limitPlanets {
+		fmt.Println("Name:", p.Name)
+		if verbose {
+			fmt.Println("Climate:", p.Climate)
+			fmt.Println("Diameter:", p.Diameter)
+		}
+		fmt.Println("--------------")
+	}
 }

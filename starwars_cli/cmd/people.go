@@ -17,23 +17,14 @@ var peopleCmd = &cobra.Command{
 	Short: "Get all people in Starwars with information in command line",
 	Long:  `Get all people in Starwars with information in command line`,
 	Run: func(cmd *cobra.Command, args []string) {
-		verbose, err := cmd.Flags().GetBool("verbose")
+		verbose, limit, err := api.CheckAllFlags(cmd)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("error with flag:", err)
 			return
 		}
-
-		limit, err := cmd.Flags().GetInt("limit")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		test, err := cmd.Flags().GetBool("vers")
-		fmt.Println("persistant flag", test)
-
 		if verbose {
 			fmt.Println("Running in verbose mode")
+			fmt.Println("")
 		}
 		getAllPeople(limit, verbose)
 	},
@@ -41,8 +32,6 @@ var peopleCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(peopleCmd)
-	peopleCmd.Flags().BoolP("verbose", "v", false, "Log all data")
-	peopleCmd.Flags().IntP("limit", "l", -1, "Limit data show in terminal")
 }
 
 func getAllPeople(limit int, verbose bool) {
@@ -62,7 +51,8 @@ func getAllPeople(limit int, verbose bool) {
 	for _, c := range limitCharacters {
 		fmt.Println("Name:", c.Name)
 		if verbose {
-			fmt.Println("Height:", c.Height, "|", "Eye color:", c.EyeColor)
+			fmt.Println("Height:", c.Height)
+			fmt.Println("Eye color:", c.EyeColor)
 		}
 		fmt.Println("--------------")
 	}
