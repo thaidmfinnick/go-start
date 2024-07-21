@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"starwars_cli/api"
+	"starwars_cli/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -22,10 +23,7 @@ var peopleCmd = &cobra.Command{
 			fmt.Println("error with flag:", err)
 			return
 		}
-		if verbose {
-			fmt.Println("Running in verbose mode")
-			fmt.Println("")
-		}
+		utils.PrintVerboseMode(verbose)
 		getAllPeople(limit, verbose)
 	},
 }

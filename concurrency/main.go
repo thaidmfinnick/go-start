@@ -37,6 +37,7 @@ func checkLink(link string, c chan string) {
 	}
 
 	fmt.Println(link, "is up!")
+	// when should we use go routine with channel?
 	c <- link
 
 }
