@@ -11,8 +11,50 @@ import (
 func main() {
 	// selectChannelDoneAhead()
 	// fibo_main()
-	waitGroupTest()
+	// waitGroupTest()
+	crawlRountineTest()
 }
+
+func crawlRountineTest() {
+	queue := startQueue()
+	wc := new(sync.WaitGroup)
+
+	for i := 1; i <= numberOfWorkers; i++ {
+		wc.Add(1)
+		go crawlURL(queue, fmt.Sprintf("%d", i), wc)
+	}
+	wc.Wait()
+	fmt.Println("main function")
+}
+
+func startQueue() <-chan int {
+	queue := make(chan int, 5)
+
+	go func() {
+		for i := 1; i <= numberOfURLs; i++ {
+			queue <- i
+			fmt.Printf("URL %d has been enqueued\n", i)
+		}
+
+		close(queue)
+	}()
+
+	return queue
+}
+
+func crawlURL(queue <-chan int, name string, wc *sync.WaitGroup) {
+	for v := range queue {
+		fmt.Printf("Worker %s is crawling URL %d\n", name, v)
+		// time.Sleep(time.Second)
+	}
+	fmt.Printf("Worker %s done and exit\n", name)
+	wc.Done()
+}
+
+const (
+	numberOfURLs    = 20
+	numberOfWorkers = 3
+)
 
 func waitGroupTest() {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
