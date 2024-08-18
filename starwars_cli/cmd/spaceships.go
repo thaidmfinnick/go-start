@@ -16,7 +16,7 @@ import (
 var spaceshipsCmd = &cobra.Command{
 	Use:   "ships",
 	Short: "Get all spaceships in Starwars with information in command line",
-	Long:  `Get all spaceships in Starwars with information in command line`,
+	Long:  `Get all spaceships in Starwars with information in command line and see what happened with terminal`,
 	Run: func(cmd *cobra.Command, args []string) {
 		verbose, limit, err := api.CheckAllFlags(cmd)
 		if err != nil {
