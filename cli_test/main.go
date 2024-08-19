@@ -65,6 +65,6 @@ func main() {
 		if *verbose {
 			fmt.Println("Height:", c.Height, "|", "Eye color:", c.EyeColor)
 		}
-		fmt.Println("--------------")
+		fmt.Println("-----------------------------------------")
 	}
 }
